@@ -36,6 +36,8 @@ import java.time.format.DateTimeFormatter
 import androidx.compose.material3.*
 import java.time.Instant
 import java.time.ZoneId
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 
 /**
  * Screen for adding a new booking entry.
@@ -165,6 +167,7 @@ fun DateRangePickerModal(
     onDateRangeSelected: (Pair<Long?, Long?>) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val context = LocalContext.current
     val dateRangePickerState = rememberDateRangePickerState()
 
     DatePickerDialog(
@@ -172,12 +175,20 @@ fun DateRangePickerModal(
         confirmButton = {
             TextButton(
                 onClick = {
-                    onDateRangeSelected(
-                        Pair(
-                            dateRangePickerState.selectedStartDateMillis,
-                            dateRangePickerState.selectedEndDateMillis
-                        )
-                    )
+                    val todayMillis = System.currentTimeMillis()-86400
+                    val selectedStartDateMillis = dateRangePickerState.selectedStartDateMillis
+                    val selectedEndDateMillis = dateRangePickerState.selectedEndDateMillis
+
+                    if (selectedStartDateMillis != null && selectedStartDateMillis < todayMillis) {
+                        Toast.makeText(context, "The start date cannot be before today!", Toast.LENGTH_SHORT).show()
+                        return@TextButton
+                    }
+                    if (selectedEndDateMillis != null && selectedEndDateMillis < todayMillis) {
+                        Toast.makeText(context, "The end date cannot be before today!", Toast.LENGTH_SHORT).show()
+                        return@TextButton
+                    }
+
+                    onDateRangeSelected(Pair(selectedStartDateMillis, selectedEndDateMillis))
                     onDismiss()
                 }
             ) {
@@ -201,7 +212,6 @@ fun DateRangePickerModal(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(500.dp)
-                .padding(16.dp)
         )
     }
 }
