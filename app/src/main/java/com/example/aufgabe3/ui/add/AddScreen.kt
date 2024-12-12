@@ -37,6 +37,7 @@ import androidx.compose.material3.*
 import java.time.Instant
 import java.time.ZoneId
 import android.widget.Toast
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 
 /**
@@ -175,7 +176,7 @@ fun DateRangePickerModal(
         confirmButton = {
             TextButton(
                 onClick = {
-                    val todayMillis = System.currentTimeMillis()-86400
+                    val todayMillis = System.currentTimeMillis()-86400000
                     val selectedStartDateMillis = dateRangePickerState.selectedStartDateMillis
                     val selectedEndDateMillis = dateRangePickerState.selectedEndDateMillis
 
@@ -204,9 +205,14 @@ fun DateRangePickerModal(
         DateRangePicker(
             state = dateRangePickerState,
             title = {
-                Text(
-                    text = "Select date range"
-                )
+                Column (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Text(
+                        text = "Select date range"
+                    )
+                }
             },
             showModeToggle = false,
             modifier = Modifier
@@ -215,4 +221,3 @@ fun DateRangePickerModal(
         )
     }
 }
-
